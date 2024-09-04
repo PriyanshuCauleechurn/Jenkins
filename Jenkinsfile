@@ -5,31 +5,12 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building the code...'
+                // Example: sh 'mvn clean install'
             }
         }
         stage('Unit and Integration Tests') {
             steps {
-                script {
-                    echo 'Running unit and integration tests...'
-                    try {
-                        // Example: sh 'mvn test'
-                    } catch (Exception e) {
-                        currentBuild.result = 'FAILURE'
-                        throw e
-                    }
-                }
-            }
-            post {
-                always {
-                    script {
-                        emailext(
-                            to: 'priyanshu110603@gmail.com',
-                            subject: "Unit and Integration Tests ${currentBuild.result}: ${currentBuild.fullDisplayName}",
-                            body: "The Unit and Integration Tests stage has ${currentBuild.result}. Check the attached logs for details.",
-                            attachmentsPattern: 'test-results/*.xml'
-                        )
-                    }
-                }
+                echo 'Running unit and integration tests...'
             }
         }
         stage('Code Analysis') {
@@ -39,27 +20,7 @@ pipeline {
         }
         stage('Security Scan') {
             steps {
-                script {
-                    echo 'Performing security scan...'
-                    try {
-                        // Example: sh 'security-scan.sh'
-                    } catch (Exception e) {
-                        currentBuild.result = 'FAILURE'
-                        throw e
-                    }
-                }
-            }
-            post {
-                always {
-                    script {
-                        emailext(
-                            to: 'priyanshu110603@gmail.com',
-                            subject: "Security Scan ${currentBuild.result}: ${currentBuild.fullDisplayName}",
-                            body: "The Security Scan stage has ${currentBuild.result}. Check the attached logs for details.",
-                            attachmentsPattern: 'security-scan-logs/*.log'
-                        )
-                    }
-                }
+                echo 'Performing security scan...'
             }
         }
         stage('Deploy to Staging') {
@@ -86,10 +47,7 @@ pipeline {
         success {
             emailext to: 'priyanshu110603@gmail.com',
                      subject: "Pipeline Successful: ${currentBuild.fullDisplayName}",
-                     body: "The Jenkins Pipeline has completed successfully.",
-		     from: 'jenkins@example.com',
-		     mimeType: 'text/html',
-		     attachmentsPattern: 'a.txt'
+                     body: "The Jenkins Pipeline has completed successfully."
         }
         failure {
             emailext to: 'priyanshu110603@gmail.com',
@@ -98,4 +56,3 @@ pipeline {
         }
     }
 }
-
