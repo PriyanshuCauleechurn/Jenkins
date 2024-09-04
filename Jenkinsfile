@@ -86,7 +86,10 @@ pipeline {
         success {
             emailext to: 'priyanshu110603@gmail.com',
                      subject: "Pipeline Successful: ${currentBuild.fullDisplayName}",
-                     body: "The Jenkins Pipeline has completed successfully."
+                     body: "The Jenkins Pipeline has completed successfully.",
+		     from: 'jenkins@example.com',
+		     mimeType: 'text/html',
+		     attachmentsPattern: 'a.txt'
         }
         failure {
             emailext to: 'priyanshu110603@gmail.com',
