@@ -51,16 +51,20 @@ pipeline {
             echo 'Pipeline complete.'
         }
         success {
-            mail to: 'priyanshu110603@gmail.com',
+            emailext(
+                to: 'priyanshu110603@gmail.com',
                 subject: "Pipeline Successful: ${currentBuild.fullDisplayName}",
-                body: "The Jenkins Pipeline has completed successfully.",
+                body: "The Jenkins Pipeline has completed successfully. Check the attached log for details.",
                 attachLog: true
+            )
         }
         failure {
-            mail to: 'priyanshu110603@gmail.com',
+            emailext(
+                to: 'priyanshu110603@gmail.com',
                 subject: "Pipeline Failed: ${currentBuild.fullDisplayName}",
-                body: "The Jenkins Pipeline has failed.",
+                body: "The Jenkins Pipeline has failed. Check the attached log for details.",
                 attachLog: true
+            )
         }
     }
 }
