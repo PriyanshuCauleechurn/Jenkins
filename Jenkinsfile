@@ -4,70 +4,63 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Building the code...'
+                echo 'Building the code using Maven...'
                 // Example: sh 'mvn clean install'
             }
         }
         stage('Unit and Integration Tests') {
             steps {
-                echo 'Running unit and integration tests...'
+                echo 'Running unit and integration tests using JUnit...'
+                // Example: sh 'mvn test'
             }
         }
         stage('Code Analysis') {
             steps {
-                echo 'Analyzing code...'
+                echo 'Analyzing code with SonarQube...'
+                // Example: sh 'sonar-scanner'
             }
         }
         stage('Security Scan') {
             steps {
-                echo 'Performing security scan...'
+                echo 'Performing security scan with OWASP Dependency-Check...'
+                // Example: sh 'dependency-check.sh --project JenkinsPipelineDemo'
             }
         }
         stage('Deploy to Staging') {
             steps {
                 echo 'Deploying to staging environment...'
+                // Example: sh 'scp target/app.war user@staging-server:/var/www/app/'
             }
         }
         stage('Integration Tests on Staging') {
             steps {
                 echo 'Running integration tests on staging environment...'
+                // Example: sh 'curl -s http://staging-server/app/test'
             }
         }
         stage('Deploy to Production') {
             steps {
                 echo 'Deploying to production environment...'
+                // Example: sh 'scp target/app.war user@production-server:/var/www/app/'
             }
         }
     }
 
     post {
         always {
-            script {
-                def jobName = env.JOB_NAME
-                def buildNumber = env.BUILD_NUMBER
-                def pipelineStatus = currentBuild.result ?: 'UNKNOWN'
-                def bannerColor = pipelineStatus.toUpperCase() == 'SUCCESS' ? 'green' : 'red'
-
-                def body = """<html>
-                             <body>
-                                <div style="border: 4px solid ${bannerColor}; padding:10px;">
-                                    <h2>${jobName} - Build ${buildNumber}</h2>
-                                    <div style="background-color: ${bannerColor}; padding: 10px;">
-                                        <h3 style="color: white;">Pipeline Status: ${pipelineStatus.toUpperCase()}</h3>
-                                    </div>
-                                    <p>Check the <a href="${BUILD_URL}">console output</a>.</p>
-                                </div>
-                             </body>
-                          </html>"""
-                emailext(
-                    subject: "${jobName} - Build ${buildNumber} - ${pipelineStatus.toUpperCase()}",
-                    body: body,
-                    to: 'priyanshu110603@gmail.com',
-                    from: 'jenkins@example.com',
-                    replyTo: 'jenkins@example.com',
-                    mimeType: 'text/html'
-                )
-            }
+            echo 'Pipeline complete.'
+        }
+        success {
+            mail to: 'priyanshu110603@gmail.com',
+                subject: "Pipeline Successful: ${currentBuild.fullDisplayName}",
+                body: "The Jenkins Pipeline has completed successfully.",
+                attachLog: true
+        }
+        failure {
+            mail to: 'priyanshu110603@gmail.com',
+                subject: "Pipeline Failed: ${currentBuild.fullDisplayName}",
+                body: "The Jenkins Pipeline has failed.",
+                attachLog: true
         }
     }
 }
